@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>Document</title>
+
+	<!-- <link rel="stylesheet" href="style.css"> -->
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body,html{
+			width: 100%;
+			height: 100%;
+		}
+		body{
+			background: rgb(52, 73, 94);
+		}
+		.svg{
+			background: rgb(52, 73, 94);
+			height: 90%;
+			display: flex;
+			display: -webkit-flex;
+			display: -moz-flex;
+			justify-content: center;
+			align-items: center;
+		}
+		svg{
+			/*border: 1px solid red;*/
+		}
+		p{
+			color: white;
+		}
+		/*#day{
+			transform: rotate(-90deg) ;
+			transform-origin: 179px 40%;
+		}
+		#hour{
+			transform: rotate(-90deg);
+			transform-origin: 556px 40%;
+		}
+		#minute{
+			transform: rotate(-90deg);
+			transform-origin: 930px 40%;
+		}
+		#second{
+			transform: rotate(-90deg);
+			transform-origin: 1305px 40%;
+		}*/
+		circle{
+			transition: .1s;
+		}
+		input[type="button"]{
+			z-index: 3;
+		}
+		.timeInput{
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		text{
+			font-size: 30px;
+			font-weight: bolder;
+			position: absolute;
+			bottom: 1px;
+		}
+		.mainTime{
+			font-size: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div class="timeInput">
+		<form>
+			<input type="datetime-local" id='date'>
+			<input type="button" value="开始" id="start">
+			<input type="button" value="清空" id="empty"> 
+		</form>
+	</div>
+	<!-- <h1 style="text-align:center;color:white;font-size:40px;">距离下一届世赛还有</h1> -->
+	<div class="svg">
+		<svg width="1500px" height="900px" preserveAspectRatio="xMinYMid meet" viewBox="0 0 1500 900">
+			<circle cx="179px" cy="40%" r="120" stroke-width="15" stroke="#5D6D7E" fill="transparent"></circle>  
+			<circle cx="179px" cy="40%" r="120" stroke-width="15" stroke="#F1C40F" fill="transparent" id="day"  stroke-dasharray="754 754" transform="rotate(-90 179 360)"></circle>
+
+			<circle cx="556px" cy="40%" r="120" stroke-width="15" stroke="#5D6D7E" fill="transparent"></circle>  
+			<circle cx="556px" cy="40%" r="120" stroke-width="15" stroke="#F1C40F" fill="transparent" id="hour"  stroke-dasharray="754 754" transform="rotate(-90 556 360)"></circle>   <!-- 小时 -->
+
+			<circle cx="930px" cy="40%" r="120" stroke-width="15" stroke="#5D6D7E" fill="transparent"></circle>
+			<circle cx="930px" cy="40%" r="120" stroke-width="15" stroke="#F1C40F" fill="transparent" id="minute"  stroke-dasharray="754 754" transform="rotate(-90 930 360)"></circle>   <!--  分钟 -->
+
+			<circle cx="1305px" cy="40%" r="120" stroke-width="15" stroke="#5D6D7E" fill="transparent"></circle>
+			<circle cx="1305px" cy="40%" r="120" stroke-width="15" stroke="#F1C40F" fill="transparent" id="second" stroke-dasharray="754 754" transform="rotate(-90 1305 360)"></circle>    <!-- 秒数-->
+
+			<text x="135px" y="70%" fill="white">Days</text>
+			<text x="510px" y="70%" fill="white">Hours</text>
+			<text x="870px" y="70%" fill="white">Minutes</text>
+			<text x="1245px" y="70%" fill="white">Seconds</text>
+
+			<text x="160px" y="41%" fill="white" id="Dtime" class="mainTime"></text>
+			<text x="535px" y="41%" fill="white" id="Htime" class="mainTime"></text>
+			<text x="910px" y="41%" fill="white" id="Mtime" class="mainTime"></text>
+			<text x="1285px" y="41%" fill="white" id="Stime" class="mainTime"></text>
+		</svg>
+	</div>
+
+	<script>
+		window.onload=function(){
+			dateTime2=window.localStorage.getItem('dateTime');
+			if(dateTime2!=null){
+				document.getElementById('date').value=dateTime2;
+			}
+		}
+		var dateTime2;
+
+		var hour=document.getElementById('hour');
+		var minute=document.getElementById('minute');
+		var second=document.getElementById('second');
+		var day=document.getElementById('day');
+		var Htime=document.getElementById('Htime');
+		var Mtime=document.getElementById('Mtime');
+		var Stime=document.getElementById('Stime');
+		var Dtime=document.getElementById('Dtime');
+
+		var start=document.getElementById('start');
+		var perimeter=Math.PI*2*120;
+		// console.log(perimeter);
+		var down,down1,down2,down3,down4,timer;
+
+		//开始
+		start.onclick=function(){
+			// var countDown2=window.localStorage.getItem('countDown');
+			// console.log(countDown2);
+			if(document.getElementById('date').value==''){
+				alert('请正确输入日期时间');
+			}else{
+				window.localStorage.setItem('dateTime',document.getElementById('date').value);
+				timer=setInterval(function(){
+					var time=new Date(document.getElementById('date').value);
+					var time2=new Date();
+
+					down=parseInt((time.getTime()-time2.getTime())/1000);
+					if(down<0){
+						clearInterval(timer)
+						alert('请输入一个比当前时间大的时间');
+					}else{
+						var d=parseInt(down/3600/24)
+						h=parseInt(down/3600%24);
+						m=parseInt(down/60%60);
+						s=parseInt(down%60);
+						down1=d;
+						down2=h;
+						down3=m;
+						down4=s;
+						
+						reduce1=d/365;
+						reduce2=h/24;
+						reduce3=m/60;
+						reduce4=s/60;
+
+						
+						if(down1<10){
+							down1=+d;
+						}
+						if(down2<10){
+							down2='0'+h;
+						}
+						if(down3<10){
+							down3='0'+m;
+						}
+						if(down4<10){
+							down4='0'+s;
+						}
+
+						Dtime.innerHTML=`${down1}`;
+						Htime.innerHTML=`${down2}`;
+						Mtime.innerHTML=`${down3}`;
+						Stime.innerHTML=`${down4}`;
+						day.setAttribute("stroke-dasharray",perimeter*reduce1+" 754");
+						hour.setAttribute("stroke-dasharray",perimeter*reduce2+" 754");
+						minute.setAttribute("stroke-dasharray",perimeter*reduce3+" 754");
+						second.setAttribute("stroke-dasharray",perimeter*reduce4+" 754");
+
+						if(d==0&&h==0&&m==0&&s==0){
+							clearInterval(timer);
+							window.localStorage.removeItem('dateTime');
+							alert('时间到!');
+						}
+					}
+
+					
+				},1000)
+			}
+			
+		}
+
+		//清空
+		var empty=document.getElementById('empty');
+		empty.onclick=function(){
+			clearInterval(timer);
+			document.getElementById('date').value='';
+			window.localStorage.removeItem('dateTime');
+			Dtime.innerHTML=``;
+			Htime.innerHTML=``;
+			Mtime.innerHTML=``;
+			Stime.innerHTML=``;
+			day.setAttribute("stroke-dasharray","754 754");
+			hour.setAttribute("stroke-dasharray","754 754");
+			minute.setAttribute("stroke-dasharray","754 754");
+			second.setAttribute("stroke-dasharray","754 754");
+		}
+//开发者：网站设计与开发项目 林清鑫
+	</script>
+</body>
+</html>

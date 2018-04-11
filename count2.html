@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<!-- <link rel="stylesheet" href="style.css"> -->
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body,html{
+			width: 100%;
+			height: 100%;
+		}
+		body{
+			background: rgb(52, 73, 94);
+		}
+		.svg{
+			background: rgb(52, 73, 94);
+			height: 100%;
+			display: flex;
+			display: -webkit-flex;
+			display: -moz-flex;
+			justify-content: center;
+			align-items: center;
+		}
+		svg{
+			/* border: 1px solid red; */
+		}
+		p{
+			color: white;
+		}
+		/*#hour{
+			transform: rotate(-90deg);
+			transform-origin: 240px 40%;
+		}
+		#minute{
+			transform: rotate(-90deg);
+			transform-origin: 800px 40%;
+		}
+		#second{
+			transform: rotate(-90deg);
+			transform-origin: 1360px 40%;
+		}*/
+		circle{
+			transition: .1s;
+		}
+		input[type="button"]{
+			z-index: 3;
+		}
+		.timeInput{
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		text{
+			font-size: 30px;
+			font-weight: bolder;
+		}
+		.mainTime{
+			font-size: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div class="timeInput">
+		<input type="text" id="date" placeholder="时"> <input type="text" placeholder="分" id="date2">
+		<input type="button" value="开始" id="start">
+		<input type="button" value="暂停" id="pause">
+		<input type="button" value="清空" id="empty">
+	</div>
+	<div class="svg">
+		<svg width="1600" height="900" preserveAspectRatio="xMinYMid meet" viewBox="0 0 1600 900">
+			<circle cx="240px" cy="40%" r="180" stroke-width="15" stroke="#5D6D7E" fill="transparent"></circle>
+			<circle cx="240px" cy="40%" r="180" stroke-width="15" stroke="#F1C40F" fill="transparent" id="hour"  stroke-dasharray="1131" transform="rotate(-90 240 360)"></circle>   <!-- 小时 -->
+
+			<circle cx="800px" cy="40%" r="180" stroke-width="15" stroke="#5D6D7E" fill="transparent"></circle>
+			<circle cx="800px" cy="40%" r="180" stroke-width="15" stroke="#F1C40F" fill="transparent" id="minute"  stroke-dasharray="1131" transform="rotate(-90 800 360)"></circle>   <!-- 分钟 -->
+
+			<circle cx="1360px" cy="40%" r="180" stroke-width="15" stroke="#5D6D7E" fill="transparent"></circle>
+			<circle cx="1360px" cy="40%" r="180" stroke-width="15" stroke="#F1C40F" fill="transparent" id="second" stroke-dasharray="1131" transform="rotate(-90 1360 360)"></circle>    <!-- 秒数 -->
+
+			<text x="195px" y="70%" fill="white">Hour</text>
+			<text x="750px" y="70%" fill="white">Minute</text>
+			<text x="1300px" y="70%" fill="white">Seconds</text>
+
+			<text x="220px" y="40%" fill="white" id="Htime" class="mainTime"></text>
+			<text x="775px" y="40%" fill="white" id="Mtime" class="mainTime"></text>
+			<text x="1320px" y="40%" fill="white" id="Stime" class="mainTime"></text>
+		</svg>
+	</div>
+
+	<script>
+		
+		var hour=document.getElementById('hour');
+		var minute=document.getElementById('minute');
+		var second=document.getElementById('second');
+		var Htime=document.getElementById('Htime');
+		var Mtime=document.getElementById('Mtime');
+		var Stime=document.getElementById('Stime');
+
+		var start=document.getElementById('start');
+		var perimeter=Math.PI*2*180;
+		
+		var down,down1,down2,down3,timer;
+		var continu=0;
+		var timerFlag=false;
+		window.onload=function(){
+			storageTime=window.localStorage.getItem('storageTime');
+			
+			document.getElementById('date').value=window.localStorage.getItem('date');
+			document.getElementById('date2').value=window.localStorage.getItem('date2');
+		}
+		//开始
+		start.onclick=function(){
+			// clearInterval(timer)
+			// timerFlag=true;
+			if(!document.getElementById('date').value.replace(/(^\s*)|(\s*$)/g, "") && !document.getElementById('date2').value.replace(/(^\s*)|(\s*$)/g, "")){
+				alert('请正确输入所需时间')
+			}else if(document.getElementById('date').value==0&&document.getElementById('date2').value==0){
+				alert('请正确输入所需时间')
+			}
+			else {
+				// clearInterval(timer)
+				continu++;
+				if(continu==1){
+					var date=document.getElementById('date').value*3600;
+					var date2=document.getElementById('date2').value*60;
+					if(document.getElementById('date').value!=window.localStorage.getItem('date')||document.getElementById('date2').value!=window.localStorage.getItem('date2')){
+						allTime=document.getElementById('date').value*3600+document.getElementById('date2').value*60;
+						console.log('1')
+						window.localStorage.setItem('date',document.getElementById('date').value);
+						window.localStorage.setItem('date2',document.getElementById('date2').value);
+					}else if(storageTime!=null&&document.getElementById('date').value==window.localStorage.getItem('date')&&document.getElementById('date2').value==window.localStorage.getItem('date2')){
+						allTime=storageTime;
+						console.log('2')
+						// if(document.getElementById('date').value*3600+document.getElementById('date2').value*60!=storageTime){
+						// 	allTime=document.getElementById('date').value*3600+document.getElementById('date2').value*60;
+						// }
+					}
+					timer=setInterval(function(){
+						allTime--;
+						window.localStorage.setItem('storageTime',allTime);
+						var h=Math.floor(allTime/3600%24);
+						var m=Math.floor(allTime/60%60);
+						var s=Math.floor(allTime%60);
+	
+						down1=h;
+						down2=m;
+						down3=s;
+	
+						Htime.innerHTML=`${down1}`;
+						Mtime.innerHTML=`${down2}`;
+						Stime.innerHTML=`${down3}`;
+	
+						reduce1=h/document.getElementById('date').value;
+						
+						reduce2=m/60;
+						reduce3=s/60;
+						hour.setAttribute("stroke-dasharray",perimeter*reduce1+" 1131");
+						minute.setAttribute("stroke-dasharray",perimeter*reduce2+" 1131");
+						second.setAttribute("stroke-dasharray",perimeter*reduce3+" 1131");
+	
+						if(h==0&&m==0&&s==0){
+							clearInterval(timer);
+							window.localStorage.removeItem('storageTime');
+							window.localStorage.removeItem('date');
+							window.localStorage.removeItem('date2');
+							alert('时间到!');
+						}
+					},1000)
+				}else{
+					clearInterval(timer)
+					storageTime=window.localStorage.getItem('storageTime');
+					if(document.getElementById('date').value!=window.localStorage.getItem('date')||document.getElementById('date2').value!=window.localStorage.getItem('date2')){
+						allTime=document.getElementById('date').value*3600+document.getElementById('date2').value*60;
+						console.log('1');
+						window.localStorage.setItem('date',document.getElementById('date').value);
+						window.localStorage.setItem('date2',document.getElementById('date2').value);
+					}else if(storageTime!=null&&document.getElementById('date').value==window.localStorage.getItem('date')&&document.getElementById('date2').value==window.localStorage.getItem('date2')){
+						allTime=storageTime;
+						console.log('2')
+						// if(document.getElementById('date').value*3600+document.getElementById('date2').value*60!=storageTime){
+						// 	allTime=document.getElementById('date').value*3600+document.getElementById('date2').value*60;
+						// }
+					}
+					timer=setInterval(function(){
+						allTime--;
+						window.localStorage.setItem('storageTime',allTime);
+						var h=Math.floor(allTime/3600%24);
+						var m=Math.floor(allTime/60%60);
+						var s=Math.floor(allTime%60);
+	
+						down1=h;
+						down2=m;
+						down3=s;
+	
+						Htime.innerHTML=`${down1}`;
+						Mtime.innerHTML=`${down2}`;
+						Stime.innerHTML=`${down3}`;
+	
+						reduce1=h/document.getElementById('date').value;
+						
+						reduce2=m/60;
+						reduce3=s/60;
+						hour.setAttribute("stroke-dasharray",perimeter*reduce1+" 1131");
+						minute.setAttribute("stroke-dasharray",perimeter*reduce2+" 1131");
+						second.setAttribute("stroke-dasharray",perimeter*reduce3+" 1131");
+	
+						if(h==0&&m==0&&s==0){
+							clearInterval(timer);
+							window.localStorage.removeItem('storageTime');
+							window.localStorage.removeItem('date');
+							window.localStorage.removeItem('date2');
+							alert('时间到!');
+						}
+					},1000)
+				}	
+			}
+			
+		}
+		
+		//暂停
+		var pause=document.getElementById('pause');
+
+		pause.onclick=function(){
+			
+			clearInterval(timer);
+		}
+
+		//清空
+		var empty=document.getElementById('empty');
+		empty.onclick=function(){
+			clearInterval(timer);
+			window.localStorage.removeItem('storageTime');
+			window.localStorage.removeItem('date');
+			window.localStorage.removeItem('date2');
+			document.getElementById('date').value='';
+			document.getElementById('date2').value='';
+			Htime.innerHTML=``;
+			Mtime.innerHTML=``;
+			Stime.innerHTML=``;
+			hour.setAttribute("stroke-dasharray","1131 1131");
+			minute.setAttribute("stroke-dasharray","1131 1131");
+			second.setAttribute("stroke-dasharray","1131 1131");
+		}
+
+//开发者  网站设计与开发项目  林清鑫
+	</script>
+</body>
+</html>
